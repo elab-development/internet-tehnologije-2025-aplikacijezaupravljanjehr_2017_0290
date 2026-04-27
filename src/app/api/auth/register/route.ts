@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { eq, exists } from "drizzle-orm";
+import { eq} from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { AUTH_COOKIE, cookieOpts, signAuthToken } from "@/lib/auth";
 import bcrypt from "bcrypt" 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     //Provjera da li korisnik sa datim emailom već postoji
     const existingUser = await db.select().from(users).where(eq(users.email, email))
-    if (exists.length) return NextResponse.json({ error: "Korisnik sa datim emailom već postoji" }, { status: 400 });
+    if (existingUser.length) return NextResponse.json({ error: "Korisnik sa datim emailom već postoji" }, { status: 400 });
 
     //Hashiranje lozinke prije spremanja u bazu
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     //Postavljanje tokena u kolačić i vraćanje odgovora sa korisničkim podacima
     const res = NextResponse.json({ id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.position });
     res.cookies.set(AUTH_COOKIE, token, cookieOpts());
-    
+
     return res;
 
 }
