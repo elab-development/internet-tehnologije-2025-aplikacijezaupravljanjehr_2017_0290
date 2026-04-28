@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 // Endpoint za odobravanje zahtjeva za godišnji odmor, dostupan samo HR menadžerima i administratorima
 export async function POST(req: Request, { params }: { params: Promise<{id: string}> }) {
     const { error } = await requireRole("HR_MANAGER", "ADMIN");
-    if (error) return NextResponse.json({ error }, { status: 401 });
+    if (error) return error;
 
     const { id } = await params;
     const [request] = await db.update(ptoRequests)

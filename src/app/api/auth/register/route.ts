@@ -34,6 +34,7 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
+        position: (position as "EMPLOYEE" | "HR_MANAGER" | "ADMIN")
     }).returning({id: users.id, email: users.email, name: users.name, position: users.position});
 
 

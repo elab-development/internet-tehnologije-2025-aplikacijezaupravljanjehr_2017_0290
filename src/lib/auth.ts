@@ -1,5 +1,4 @@
 import * as jwt from "jsonwebtoken";
-import path from "path";
 
 export const AUTH_COOKIE = "auth";
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -42,6 +41,6 @@ export function cookieOpts() {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax" as const,
         path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 7 * 24 * 60 * 60,
     };
 }

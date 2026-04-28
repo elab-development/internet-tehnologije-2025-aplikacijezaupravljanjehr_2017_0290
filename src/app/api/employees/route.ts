@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 // Endpoint za dohvatanje svih zaposlenih, dostupno svim autentifikovanim korisnicima
 export async function GET(req: Request) {
     const { error } = await requestAuth();
-    if (error) return NextResponse.json({ error }, { status: 401 });
+    if (error) return error;
 
     const { searchParams } = new URL(req.url);
     const departmentId = searchParams.get("departmentId");
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
 // Endpoint za kreiranje novog zaposlenog, dostupan samo HR menadžerima i administratorima
 export async function POST(req: Request) {
     const { error } = await requireRole("HR_MANAGER", "ADMIN");
-    if (error) return NextResponse.json({ error }, { status: 401 });
+    if (error) return error;
 
     const body = await req.json();
     const [e] = await db.insert(employees).values(body).returning();

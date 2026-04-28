@@ -8,6 +8,9 @@ type Ctx= { params: Promise<{id: string;}> };
 
 // Endpoint za dohvatanje pojedinačnog zaposlenog po ID-ju, dostupan svim autentifikovanim korisnicima
 export async function GET(req: Request, { params }: Ctx) {
+    const { error } = await requireRole("HR_MANAGER", "ADMIN");
+    if (error) return error;
+
     const { id } = await params;
     const [row] = await db.select().from(employees).where(eq(employees.id, id));
     if (!row) return NextResponse.json({ error: "Zaposleni nije pronađen" }, { status: 404 });
@@ -17,7 +20,7 @@ export async function GET(req: Request, { params }: Ctx) {
 // Endpoint za ažuriranje postojećeg zaposlenog, dostupan samo HR menadžerima i administratorima
 export async function PUT(req: Request, { params }: Ctx) {
     const { error } = await requireRole("HR_MANAGER", "ADMIN");
-    if (error) return NextResponse.json({ error }, { status: 401 });
+    if (error) return error;
 
     const { id } = await params;
     const body = await req.json();
@@ -29,7 +32,7 @@ export async function PUT(req: Request, { params }: Ctx) {
 // Endpoint za brisanje zaposlenog, dostupan samo HR menadžerima i administratorima
 export async function DELETE(req: Request, { params }: Ctx) {
     const { error } = await requireRole("HR_MANAGER", "ADMIN");
-    if (error) return NextResponse.json({ error }, { status: 401 });
+    if (error) return error;
 
     const { id } = await params;
     await db.delete(employees).where(eq(employees.id, id));
